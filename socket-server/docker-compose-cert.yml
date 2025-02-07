@@ -1,0 +1,11 @@
+services:
+  letsencrypt:
+    container_name: 'certbot-service'
+    image: certbot/certbot
+    command: sh -c "certbot certonly --webroot -w /tmp/acme_challenge -d ec2-54-82-69-77.compute-1.amazonaws.com --text --agree-tos --email thiago_marketingdigital@hotmail.com --rsa-key-size 4096 --verbose --keep-until-expiring --preferred-challenges=http"
+    entrypoint: ''
+    volumes:
+      - './ssl:/etc/letsencrypt'
+      - '/tmp/acme_challenge:/tmp/acme_challenge'
+    environment:
+      - TERM=xterm
