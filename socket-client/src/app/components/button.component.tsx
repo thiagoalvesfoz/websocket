@@ -3,7 +3,7 @@ import { ButtonHTMLAttributes } from "react";
 export default function Button(props: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
-      className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-md"
+      className="p-2 bg-emerald-500 hover:bg-opacity-80 text-white rounded-md"
       {...props}
     >
       <svg
@@ -12,7 +12,7 @@ export default function Button(props: ButtonHTMLAttributes<HTMLButtonElement>) {
         viewBox="0 0 24 24"
         strokeWidth="1.5"
         stroke="currentColor"
-        className="size-6 text-white"
+        className="size-6 text-slate-50"
       >
         <path
           strokeLinecap="round"
