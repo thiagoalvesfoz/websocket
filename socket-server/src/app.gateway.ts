@@ -10,7 +10,9 @@ import { Server, Socket } from 'socket.io';
 
 interface Payload {
   type: 'JOIN' | 'LEFT' | 'SAY';
-  message: string;
+  username: string;
+  message?: string;
+  timestamp: Date;
 }
 
 @WebSocketGateway({
@@ -40,7 +42,8 @@ export class AppGateway
 
       const message: Payload = {
         type: 'LEFT',
-        message: `${username} saiu da sala`,
+        username,
+        timestamp: new Date(),
       };
 
       this.server.emit('message', message);
@@ -62,7 +65,8 @@ export class AppGateway
 
     const payload: Payload = {
       type: 'JOIN',
-      message: `${username} entrou na sala`,
+      username,
+      timestamp: new Date(),
     };
 
     this.clients.set(client.id, username);
@@ -74,13 +78,25 @@ export class AppGateway
     if (payload.type === 'SAY') {
       const username = this.clients.get(client.id);
 
+      if (!username) return;
+
       payload = {
         ...payload,
-        message: `${username}: ${payload.message}`,
+        username,
+        timestamp: new Date(),
       };
     }
 
     this.server.emit('message', payload);
+  }
+
+  @SubscribeMessage('typing')
+  handleTyping(client: Socket, isTyping: boolean): void {
+    const username = this.clients.get(client.id);
+
+    if (username) {
+      this.server.emit('typing', { username, isTyping });
+    }
   }
 
   private isUsernameTaken(username: string): boolean {
