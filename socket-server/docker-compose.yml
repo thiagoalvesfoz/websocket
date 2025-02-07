@@ -1,9 +1,38 @@
 services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx-ssl
+    ports:
+      - "80:80"       # Redirecionar HTTP para HTTPS
+      - "443:443"     # HTTPS
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf  # Configuração do NGINX
+      - ./ssl:/etc/nginx/ssl                               # Certificados SSL
+    depends_on:
+      - backend  # Garante que o backend (NestJS) será iniciado antes
+    restart: always
+    networks:
+      - backend-net
+  
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./ssl:/etc/letsencrypt  # Para persistir os certificados
+      - ./nginx:/etc/nginx      # Para acessar a configuração do NGINX
+    entrypoint: "/bin/sh -c 'trap exit TERM; certbot renew --quiet; while :; do sleep 12h & wait $${!}; done;'"
+    networks:
+      - backend-net
+
   backend:
     build: .
-    container_name: nest_backend
-    ports:
-      - '80:3000'
-    # env_file:
-    #   - .env
+    container_name: backend
+    expose:
+      - "3000"  # Expõe a porta 3000 para a rede interna
+    networks:
+      - backend-net
     restart: always
+
+networks:
+  backend-net:
+    driver: bridge
