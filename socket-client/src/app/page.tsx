@@ -128,23 +128,31 @@ export default function Home() {
       );
     }
 
+    const isSelf = username === payload.username;
+
     return (
       <div
-        data-self={username === payload.username}
-        className="p-2 bg-slate-200 data-[self=true]:bg-emerald-100 rounded-lg md:max-w-[40%] mr-auto ml-0 data-[self=true]:ml-auto data-[self=true]:mr-0 data-[self=true]:text-right"
+        data-self={isSelf}
+        className="flex flex-row-reverse data-[self=true]:flex-row"
       >
-        {username !== payload.username && (
-          <span className="font-bold text-sm text-gray-950">
-            {payload.username}
-          </span>
-        )}
-        <div className="space-x-3">
-          <span className="break-words text-md text-slate-600 ">
-            {payload.message}
-          </span>
-          <span className="font-normal text-xs text-slate-400">
-            {formatTime(payload.timestamp)}
-          </span>
+        <div className="flex-1"></div>
+        <div
+          data-self={isSelf}
+          className="p-2 bg-slate-200 data-[self=true]:bg-emerald-100 rounded-lg max-w-[90%] md:max-w-[40%]"
+        >
+          {!isSelf && (
+            <span className="font-bold text-sm text-gray-950">
+              {payload.username}
+            </span>
+          )}
+          <div className="space-x-3">
+            <span className="break-words text-md text-slate-600 ">
+              {payload.message}
+            </span>
+            <span className="font-normal text-xs text-slate-400">
+              {formatTime(payload.timestamp)}
+            </span>
+          </div>
         </div>
       </div>
     );
@@ -164,9 +172,9 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-gray-300 flex items-center justify-center h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <div className="flex flex-col w-full h-full bg-white rounded-md shadow-md p-8 space-y-4">
-        <div className="flex items-center justify-between">
+    <div className="bg-gray-300 flex items-center justify-center h-screen p-0 lg:p-8 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <div className="flex flex-col w-full max-w-[1366px] h-full bg-white rounded-md shadow-md p-4 md:p-8 space-y-4">
+        <div className="flex items-center justify-between ">
           <h1 className="text-2xl font-bold text-gray-900">Sala</h1>
           <button
             className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-md"
