@@ -2,10 +2,27 @@ services:
   letsencrypt:
     container_name: 'certbot-service'
     image: certbot/certbot
-    command: sh -c "certbot certonly --webroot -w /tmp/acme_challenge -d thiago.solutions -d www.thiago.solutions --text --agree-tos --email thiago_marketingdigital@hotmail.com --rsa-key-size 4096 --verbose --keep-until-expiring --preferred-challenges=http"
-    entrypoint: ''
+    command:
+      - certonly
+      - --webroot
+      - -w
+      - /var/www/acme_challenge
+      - -d
+      - thiago.solutions
+      - -d
+      - www.thiago.solutions
+      - --text
+      - --agree-tos
+      - --email
+      - thiago_marketingdigital@hotmail.com
+      - --rsa-key-size
+      - "4096"
+      - --verbose
+      - --keep-until-expiring
+      - --preferred-challenges=http
+
     volumes:
       - './ssl:/etc/letsencrypt'
-      - '/tmp/acme_challenge:/tmp/acme_challenge'
+      - './ssl/acme_challenge:/var/www/acme_challenge'
     environment:
       - TERM=xterm
