@@ -30,6 +30,8 @@ export class AppGateway
   // Map to store client IDs and their corresponding usernames
   private clients: Map<string, string> = new Map();
 
+  private typingUsers = new Set<string>();
+
   afterInit() {
     console.log('WebSocket server initialized');
   }
@@ -93,10 +95,15 @@ export class AppGateway
   @SubscribeMessage('typing')
   handleTyping(client: Socket, isTyping: boolean): void {
     const username = this.clients.get(client.id);
+    if (!username) return;
 
-    if (username) {
-      this.server.emit('typing', { username, isTyping });
+    if (isTyping) {
+      this.typingUsers.add(username);
+    } else {
+      this.typingUsers.delete(username);
     }
+
+    this.server.emit('typingUpdate', Array.from(this.typingUsers));
   }
 
   private isUsernameTaken(username: string): boolean {

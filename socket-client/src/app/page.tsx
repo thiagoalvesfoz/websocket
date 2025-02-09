@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Username } from "./components/username.component";
 import { Sender } from "./components/sender.component";
 import socket from "@/gateway/socket";
+import TypingUsers from './components/typing.component';
 
 interface Payload {
   type: 'JOIN' | 'LEFT' | 'SAY';
@@ -12,16 +13,10 @@ interface Payload {
   timestamp: Date;
 }
 
-interface Typing {
-  username?: string;
-  isTyping: boolean;
-}
-
 export default function Home() {
   const [connected, setConnected] = useState(false);
   const [username, setUsername] = useState('');
   const [messages, setMessages] = useState<Payload[]>([]);
-  const [typing, setTyping] = useState<Typing>({ isTyping: false });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -37,10 +32,6 @@ export default function Home() {
       } else {
         alert('O usuário já existe na sala');
       }
-    });
-
-    socket.on('typing', (payload) => {
-      setTyping(payload);
     });
 
     socket.on('message', (message) => {
@@ -80,7 +71,6 @@ export default function Home() {
 
   const handleDisconnect = useCallback(() => {
     socket.disconnect();
-    setTyping({ isTyping: false });
     setConnected(false);
     setUsername('');
     setMessages([]);
@@ -158,22 +148,9 @@ export default function Home() {
     );
   };
 
-  const Typing = () => {
-    return (
-      <div className="flex">
-        <div className="relative flex gap-1 p-2">
-          <div className="size-1.5 bg-slate-500 rounded-full typing-dot" />
-          <div className="size-1.5 bg-slate-500 rounded-full typing-dot" />
-          <div className="size-1.5 bg-slate-500 rounded-full typing-dot" />
-        </div>
-        <span className="text-slate-600">{typing.username} está digitando</span>
-      </div>
-    );
-  };
-
   return (
-    <div className="bg-gray-300 flex items-center justify-center h-screen p-0 lg:p-8 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <div className="flex flex-col w-full max-w-[1366px] h-full bg-white rounded-md shadow-md p-4 md:p-8 space-y-4">
+    <div className="bg-gray-300 flex flex-col items-center justify-center min-h-dvh p-0 lg:p-8 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <div className="flex-1 flex flex-col w-full max-w-[1366px] h-full bg-white rounded-md shadow-md p-4 md:p-8 space-y-4">
         <div className="flex items-center justify-between ">
           <h1 className="text-2xl font-bold text-gray-900">Sala</h1>
           <button
@@ -188,10 +165,9 @@ export default function Home() {
             {messages.map((payload, index) => (
               <Message payload={payload} key={index} />
             ))}
-
             <div ref={messagesEndRef} />
           </div>
-          {typing.username !== username && typing.isTyping && <Typing />}
+          <TypingUsers self={username} />
         </div>
         <Sender handleSubmit={handleSendMessage} handleTyping={handleTyping} />
       </div>
