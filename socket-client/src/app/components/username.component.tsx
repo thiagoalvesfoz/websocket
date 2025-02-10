@@ -27,7 +27,7 @@ export const Username = () => {
   return (
     <form
       onSubmit={handleSubmitForm}
-      className="flex flex-col w-full max-w-md space-y-2 text-gray-900"
+      className="flex flex-col w-full max-w-md space-y-2 p-4 text-gray-900"
     >
       <label htmlFor="username">Nome de usuário</label>
       <div className="flex items-center space-x-2">

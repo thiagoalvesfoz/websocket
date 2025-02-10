@@ -47,8 +47,10 @@ export class AppGateway
         timestamp: new Date(),
       };
 
-      this.server.emit('message', message);
       this.clients.delete(client.id);
+      this.typingUsers.delete(username);
+
+      this.server.emit('message', message);
       this.server.emit('userActives', Array.from(this.clients.values()));
     }
   }
