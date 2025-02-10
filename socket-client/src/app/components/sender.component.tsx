@@ -46,12 +46,10 @@ export const Sender: React.FC<SenderProps> = ({
   return (
     <form
       onSubmit={handleSubmitForm}
-      className="flex flex-col w-full space-y-2 text-gray-900"
+      className="flex items-center space-x-2 p-4"
     >
-      <div className="flex items-center space-x-2">
-        <Input id="message" onChange={() => typing()} />
-        <Button type="submit" />
-      </div>
+      <Input id="message" onChange={() => typing()} />
+      <Button type="submit" />
     </form>
   );
 };

@@ -3,8 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Username } from "./components/username.component";
 import { Sender } from "./components/sender.component";
-import socket from "@/gateway/socket";
+import { Menu } from 'lucide-react';
+import socket from '@/gateway/socket';
 import TypingUsers from './components/typing.component';
+import Sidebar from './components/sidebar.component';
 
 interface Payload {
   type: 'JOIN' | 'LEFT' | 'SAY';
@@ -17,6 +19,8 @@ export default function Home() {
   const [connected, setConnected] = useState(false);
   const [username, setUsername] = useState('');
   const [messages, setMessages] = useState<Payload[]>([]);
+  const [userActives, setUserAtives] = useState<string[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -43,6 +47,10 @@ export default function Home() {
       }
 
       setMessages((prev) => [...prev, message]);
+    });
+
+    socket.on('userActives', (userActives: string[]) => {
+      setUserAtives(userActives);
     });
 
     return () => {
@@ -148,28 +156,52 @@ export default function Home() {
     );
   };
 
+  const ChatHeader = () => {
+    return (
+      <div className="z-10 flex items-center justify-between p-4 gap-8">
+        <button
+          className="p-2 hover:bg-emerald-600 hover:text-white text-slate-700 rounded-md"
+          onClick={() => setIsOpen((prev) => !prev)}
+        >
+          <Menu size={24} />
+        </button>
+        <h1 className="flex-1 text-lg font-bold text-gray-900">Sala</h1>
+        <button
+          className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-md"
+          onClick={handleDisconnect}
+        >
+          Sair
+        </button>
+      </div>
+    );
+  };
+
+  const Chat = () => {
+    return (
+      <div className="border-y flex-1 p-4 bg-neutral-100 overflow-auto">
+        <div className="space-y-2 flex flex-col flex-1 ">
+          {messages.map((payload, index) => (
+            <Message payload={payload} key={index} />
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+        <TypingUsers self={username} />
+      </div>
+    );
+  };
+
   return (
-    <div className="bg-gray-300 flex flex-col items-center justify-center min-h-dvh p-0 lg:p-8 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <div className="flex-1 flex flex-col w-full max-w-[1366px] h-full bg-white rounded-md shadow-md p-4 md:p-8 space-y-4">
-        <div className="flex items-center justify-between ">
-          <h1 className="text-2xl font-bold text-gray-900">Sala</h1>
-          <button
-            className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-md"
-            onClick={handleDisconnect}
-          >
-            Sair
-          </button>
+    <div className="text-gray-700 bg-gray-300 flex flex-col items-center justify-center min-h-dvh max-h-dvh p-0 lg:p-8 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <div className="overflow-hidden flex-1 flex w-full max-w-[1366px] h-full bg-white rounded-md shadow-md ">
+        <Sidebar isOpen={isOpen} self={username} users={userActives} />
+        <div className="flex-1 flex flex-col">
+          <ChatHeader />
+          <Chat />
+          <Sender
+            handleSubmit={handleSendMessage}
+            handleTyping={handleTyping}
+          />
         </div>
-        <div className="flex-1 flex flex-col bg-gray-100 rounded-md overflow-y-auto text-gray-700 p-2">
-          <div className="space-y-2 flex flex-col flex-1">
-            {messages.map((payload, index) => (
-              <Message payload={payload} key={index} />
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-          <TypingUsers self={username} />
-        </div>
-        <Sender handleSubmit={handleSendMessage} handleTyping={handleTyping} />
       </div>
     </div>
   );

@@ -29,7 +29,6 @@ export class AppGateway
 
   // Map to store client IDs and their corresponding usernames
   private clients: Map<string, string> = new Map();
-
   private typingUsers = new Set<string>();
 
   afterInit() {
@@ -50,6 +49,7 @@ export class AppGateway
 
       this.server.emit('message', message);
       this.clients.delete(client.id);
+      this.server.emit('userActives', Array.from(this.clients.values()));
     }
   }
   handleConnection(client: Socket) {
@@ -73,6 +73,7 @@ export class AppGateway
 
     this.clients.set(client.id, username);
     this.server.emit('message', payload);
+    this.server.emit('userActives', Array.from(this.clients.values()));
   }
 
   @SubscribeMessage('message')
