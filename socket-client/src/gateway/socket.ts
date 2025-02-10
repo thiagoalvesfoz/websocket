@@ -1,7 +1,7 @@
 // socket.ts
 import { io } from "socket.io-client";
 
-const SERVER_URL = 'ws://localhost:3000/chat';
+const SERVER_URL = 'wss://thiago.soluctions/chat';
   
 const socket = io(SERVER_URL, {
   transports: ['websocket', 'polling'],
