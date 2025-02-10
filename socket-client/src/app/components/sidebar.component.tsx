@@ -1,17 +1,10 @@
 import React from 'react';
 import Avatar, { genConfig } from 'react-nice-avatar';
+import { useChatContext } from '../context/chat.context';
 
-interface SidebarProps {
-  isOpen: boolean;
-  self: string;
-  users: string[];
-}
+const Sidebar = () => {
+  const { username: self, userActives, isOpen } = useChatContext();
 
-const Sidebar: React.FC<SidebarProps> = ({
-  isOpen = false,
-  self,
-  users = [],
-}) => {
   const UserActive = ({ username }: { username: string }) => {
     const config = genConfig(username);
 
@@ -39,7 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         <ul className="space-y-5 w-full flex-1 overflow-auto p-5">
-          {users.map((username, i) => (
+          {userActives.map((username, i) => (
             <UserActive key={i} username={username} />
           ))}
         </ul>

@@ -1,17 +1,11 @@
 import { FormEvent, useRef, useState } from 'react';
 import Button from './button.component';
 import Input from './input.component';
+import { useChatContext } from '../context/chat.context';
 
-interface SenderProps {
-  handleSubmit: (message: string) => void;
-  handleTyping: (isTyping: boolean) => void;
-}
-
-export const Sender: React.FC<SenderProps> = ({
-  handleSubmit,
-  handleTyping,
-}) => {
+export const Sender = () => {
   const [isTyping, setIsTyping] = useState<boolean>(false);
+  const { handleSendMessage, handleTyping } = useChatContext();
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const handleSubmitForm = (e: FormEvent<HTMLFormElement>) => {
@@ -23,7 +17,7 @@ export const Sender: React.FC<SenderProps> = ({
 
     if (!message) return;
 
-    handleSubmit(message);
+    handleSendMessage(message);
     form.reset();
   };
 
@@ -34,7 +28,7 @@ export const Sender: React.FC<SenderProps> = ({
 
     if (!isTyping) {
       handleTyping(true);
-      setIsTyping(true); // Marca como digitando
+      setIsTyping(true);
     }
 
     typingTimeout.current = setTimeout(() => {

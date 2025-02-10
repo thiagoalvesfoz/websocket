@@ -1,26 +1,25 @@
 import { FormEvent } from "react";
 import Button from "./button.component";
 import Input from "./input.component";
+import { useChatContext } from '../context/chat.context';
 
-interface UsernameProps {
-  handleSubmit: (username: string) => void;
-}
+export const Username = () => {
+  const { handleSetUsername } = useChatContext();
 
-export const Username: React.FC<UsernameProps> = ({ handleSubmit }) => {
   const handleSubmitForm = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const form = e.target as HTMLFormElement;
 
     const inputUsername = form.elements.namedItem(
-      "username"
+      'username',
     ) as HTMLInputElement;
 
     const username = inputUsername.value;
 
     if (!username) return;
 
-    handleSubmit(username);
+    handleSetUsername(username);
 
     form.reset();
   };

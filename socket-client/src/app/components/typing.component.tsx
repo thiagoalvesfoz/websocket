@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import socket from '@/gateway/socket';
+import { useChatContext } from '../context/chat.context';
 
-interface TypingProps {
-  self: string;
-}
-
-const TypingUsers: React.FC<TypingProps> = ({ self }) => {
-  const [typingUsers, setTypingUsers] = useState<string[]>([]); // Estado para armazenar a lista de usuários digitando
+const TypingUsers = () => {
+  const { username: self } = useChatContext();
+  const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
   useEffect(() => {
     if (!socket.connected) {
@@ -46,7 +44,7 @@ const TypingUsers: React.FC<TypingProps> = ({ self }) => {
   }
 
   return (
-    <div className="flex">
+    <div className="flex pt-4">
       <div className="relative flex gap-1 p-2">
         <div className="size-1.5 bg-slate-500 rounded-full typing-dot" />
         <div className="size-1.5 bg-slate-500 rounded-full typing-dot" />
